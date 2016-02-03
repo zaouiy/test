@@ -1,21 +1,27 @@
 voting-app:
   build: ./voting-app/.
+  volumes:
+    - ./voting-app:/app
   ports:
     - "5000:80"
+  links:
+      - redis 
 redis:
-  image: redis
+  image: hypriot/rpi-redis
   ports: ["6379"]
+  
 
 worker:
   build: ./worker
-
+  links:
+    - redis
+    - db
 db:
-  image: dduportal/postgres:9.4
-  volumes:
-    - "myvolume:/var/lib/postgresql/data"
+  image: zsoltm/postgresql-armhf
 
 result-app:
   build: ./result-app/.
   ports:
     - "5001:80"
-"""test modi depuis github"""
+  links:
+    - db
